@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>投手成績・セイバーメトリクス</h1>
+<p class="lead">規定投球回以上の投手を対象。WHIP/FIP/K9/BB9/K%・BB%を自動算出。既定ではFIP昇順(良い順)。</p>
+
+<div class="tabs">
+  <a href="#central" class="active" onclick="showTab(event,'central')">セ・リーグ</a>
+  <a href="#pacific" onclick="showTab(event,'pacific')">パ・リーグ</a>
+</div>
+
+<div id="central">
+  <div class="chart-wrap">{{ chart_pit_c|safe }}</div>
+  <h3>個人投手成績一覧 (FIP昇順)</h3>
+  <div class="table-scroll">{{ table_pit_c|safe }}</div>
+</div>
+
+<div id="pacific" style="display:none">
+  <div class="chart-wrap">{{ chart_pit_p|safe }}</div>
+  <h3>個人投手成績一覧 (FIP昇順)</h3>
+  <div class="table-scroll">{{ table_pit_p|safe }}</div>
+</div>
+
+<p class="note">{{ term('FIP定数') }}(cFIP)はリーグ・年度ごとの実際の防御率と{{ term('FIP') }}構成要素から逆算しています。防御率(ERA)は守備の巧拙や残塁状況の影響を受けるのに対し、{{ term('FIP') }}は本塁打・四死球・奪三振という投手自身がコントロールしやすい要素だけで評価する指標です。</p>
+
+<script>
+function showTab(e, id) {
+  e.preventDefault();
+  document.getElementById('central').style.display = id === 'central' ? 'block' : 'none';
+  document.getElementById('pacific').style.display = id === 'pacific' ? 'block' : 'none';
+  document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
+  e.target.classList.add('active');
+  window.dispatchEvent(new Event('resize'));
+}
+</script>
+{% endblock %}

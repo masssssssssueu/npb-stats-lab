@@ -1,0 +1,56 @@
+name: Build and deploy NPB Stats Lab
+
+on:
+  schedule:
+    # 毎日 16:00 UTC = 01:00 JST (その日のNPB全試合が確実に終わっている時刻)
+    - cron: "0 16 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: npb.jpから取得したHTMLのキャッシュを復元
+        uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: npb-data-raw-${{ github.run_id }}
+          restore-keys: |
+            npb-data-raw-
+
+      - run: pip install -r requirements.txt
+
+      - run: python build_site.py 2026
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

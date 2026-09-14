@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ year }}年度 プロ野球データ分析</h1>
+<p class="lead">NPB公式サイトの成績データを元に、セイバーメトリクス指標の算出と順位・勝敗予想を行う個人分析サイトです。</p>
+
+<div class="grid cols-3">
+  {% for tile in headline_tiles %}
+  <div class="stat-tile">
+    <div class="label">{{ tile.label }}</div>
+    <div class="value">{{ tile.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<h2>セントラル・リーグ 順位表</h2>
+<div class="table-scroll">{{ standings_c|safe }}</div>
+
+<h2>パシフィック・リーグ 順位表</h2>
+<div class="table-scroll">{{ standings_p|safe }}</div>
+
+<p class="note">「{{ term('ピタゴラス勝率') }}」は得点・失点から算出する期待勝率、「運」は実際の勝利数との差分。プラスが大きいほど接戦を拾って勝てている(≒今後成績が落ち着く可能性がある)ことを示す。詳細は<a href="predictions.html">順位・勝敗予想</a>ページを参照。</p>
+
+<h2>この分析でできること</h2>
+<div class="grid cols-2">
+  <div class="card">
+    <h3 style="margin-top:0">打撃・投手成績のセイバーメトリクス分析</h3>
+    <p class="note" style="font-size:0.9rem">OPS, ISO, wOBA, RC27, BABIP, K%/BB%, wRC+, {{ term('WAR', 'WAR(簡易版)') }} (打者)、WHIP, FIP, K/9, K/BB (投手) などを自動算出してランキング表示。<a href="batting.html">打撃成績</a> / <a href="pitching.html">投手成績</a></p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">順位・勝敗予想</h3>
+    <p class="note" style="font-size:0.9rem">{{ term('ピタゴラス勝率') }}による残り試合{{ term('モンテカルロ・シミュレーション') }}で優勝確率とCS進出確率を算出。{{ term('log5法') }}によるチーム同士の対戦勝率も掲載。<a href="predictions.html">順位・勝敗予想</a></p>
+  </div>
+</div>
+{% endblock %}

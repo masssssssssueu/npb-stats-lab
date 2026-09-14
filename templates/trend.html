@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>直近{{ n_games }}試合の好調・不調選手</h1>
+<p class="lead">各チームの直近{{ n_games }}試合のボックススコアを集計し、シーズン成績と比べて調子が上がっている選手・落ちている選手を抽出しています。</p>
+<p class="note">打者は直近{{ n_games }}試合の打数が15以上、投手は投球回が5以上の選手のみを対象にしています(サンプルが少なすぎる選手を除くため)。「差」は直近成績とシーズン成績の差(打率差はプラスが好調、防御率差はプラスが好調)。</p>
+
+<h2>打者: 好調(打率が上昇)</h2>
+{% if table_bat_hot %}
+<div class="table-scroll">{{ table_bat_hot|safe }}</div>
+{% else %}
+<div class="card"><p class="note" style="margin:0">対象選手がいません。</p></div>
+{% endif %}
+
+<h2>打者: 不調(打率が低下)</h2>
+{% if table_bat_cold %}
+<div class="table-scroll">{{ table_bat_cold|safe }}</div>
+{% else %}
+<div class="card"><p class="note" style="margin:0">対象選手がいません。</p></div>
+{% endif %}
+
+<h2>投手: 好調(防御率が改善)</h2>
+{% if table_pit_hot %}
+<div class="table-scroll">{{ table_pit_hot|safe }}</div>
+{% else %}
+<div class="card"><p class="note" style="margin:0">対象選手がいません。</p></div>
+{% endif %}
+
+<h2>投手: 不調(防御率が悪化)</h2>
+{% if table_pit_cold %}
+<div class="table-scroll">{{ table_pit_cold|safe }}</div>
+{% else %}
+<div class="card"><p class="note" style="margin:0">対象選手がいません。</p></div>
+{% endif %}
+{% endblock %}

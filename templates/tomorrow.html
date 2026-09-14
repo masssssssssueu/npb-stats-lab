@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>次の対戦カード勝敗予想</h1>
+<p class="lead">{{ date_label }}をもとにした勝敗予想です。</p>
+<p class="note">
+  予想勝率 = ①シーズン勝率と直近5試合の勝率を加重平均したチーム力をlog5法(Bill James考案)で対戦勝率化し、
+  ②両先発投手のFIP差で補正したものです。あくまで簡易的な統計的推定であり、実際の試合を保証するものではありません。
+</p>
+
+{% if matchup_cards %}
+{% for card in matchup_cards %}
+{{ card|safe }}
+{% endfor %}
+{% else %}
+<div class="card"><p class="note" style="margin:0">現在、予告先発が発表されている試合はありません。</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="back-link" href="{{ path_prefix }}teams.html">← チーム成績一覧に戻る</a>
+<h1>
+  {% if team_logo_url %}<img class="team-logo-lg" src="{{ team_logo_url }}" alt="{{ team }}" loading="lazy" onerror="this.remove()">{% endif %}
+  <span style="color:{{ team_color }}">{{ team }}</span> <span style="color:var(--text-dim); font-weight:400; font-size:1rem;">{{ league }}・リーグ</span>
+</h1>
+
+<div class="grid cols-3">
+  {% for tile in tiles %}
+  <div class="stat-tile">
+    <div class="label">{{ tile.label }}</div>
+    <div class="value">{{ tile.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<h2>チーム打撃成績</h2>
+<div class="table-scroll">{{ batting_table|safe }}</div>
+
+<h2>チーム投手成績</h2>
+<div class="table-scroll">{{ pitching_table|safe }}</div>
+
+{% if roster_batting %}
+<h2>主な打者 (規定打席以上)</h2>
+<div class="table-scroll">{{ roster_batting|safe }}</div>
+{% endif %}
+
+{% if roster_pitching %}
+<h2>主な投手 (規定投球回以上)</h2>
+<div class="table-scroll">{{ roster_pitching|safe }}</div>
+{% endif %}
+
+{% if other_batting %}
+<h2>その他の打者 (規定打席未満)</h2>
+<div class="table-scroll">{{ other_batting|safe }}</div>
+{% endif %}
+
+{% if other_pitching %}
+<h2>その他の投手 (規定投球回未満)</h2>
+<div class="table-scroll">{{ other_pitching|safe }}</div>
+{% endif %}
+{% endblock %}

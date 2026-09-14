@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>順位・勝敗予想</h1>
+<p class="lead">残り{{ '{:.0f}'.format(scheduled_games) }}試合制のうち、各チームの{{ term('ピタゴラス勝率') }}(得失点から算出する「地力」)を基に{{ term('モンテカルロ・シミュレーション') }}({{ n_sim }}回試行)で最終順位を推定しています。</p>
+
+<h2>セントラル・リーグ 最終順位予想</h2>
+<div class="table-scroll">{{ table_sim_c|safe }}</div>
+<div class="chart-wrap">{{ chart_sim_c|safe }}</div>
+
+<h2>パシフィック・リーグ 最終順位予想</h2>
+<div class="table-scroll">{{ table_sim_p|safe }}</div>
+<div class="chart-wrap">{{ chart_sim_p|safe }}</div>
+
+<h2>対戦カード勝率予想 ({{ term('log5法') }})</h2>
+<p class="note">Bill James考案の{{ term('log5法') }}により、現在の勝率から2チームが対戦した場合の勝率を推定。セルはヨコ軸チームがタテ軸チームに勝つ確率。</p>
+<div class="chart-wrap">{{ chart_log5_c|safe }}</div>
+<div class="chart-wrap" style="margin-top:16px">{{ chart_log5_p|safe }}</div>
+
+<h2>選手 残りシーズン成績予想</h2>
+<p class="note">現在の出場ペースを基に計算した予想成績です。翌シーズン以降の予測ではなく、今シーズン終了時点の着地予想です。</p>
+<h3>予想最終OPSトップ15</h3>
+<div class="table-scroll">{{ table_proj_batters|safe }}</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>チーム成績</h1>
+<p class="lead">得失点・ピタゴラス勝率(得失点から算出する期待勝率)をもとにチームの地力を評価。</p>
+
+<h2>得点 vs 失点</h2>
+<div class="chart-wrap">{{ chart_runs|safe }}</div>
+
+<h2>実勝率とピタゴラス勝率の差(「運」)</h2>
+<p class="note">プラスは接戦を拾って実力以上に勝っている、マイナスは接戦を落として実力より負けているチーム。差は時間とともに縮小する傾向があるとされる。</p>
+<div class="chart-wrap">{{ chart_luck|safe }}</div>
+
+<h2>セントラル・リーグ 詳細</h2>
+<div class="table-scroll">{{ table_teams_c|safe }}</div>
+
+<h2>パシフィック・リーグ 詳細</h2>
+<div class="table-scroll">{{ table_teams_p|safe }}</div>
+{% endblock %}

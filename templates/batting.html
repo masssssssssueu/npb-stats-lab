@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>打撃成績・セイバーメトリクス</h1>
+<p class="lead">規定打席以上の選手を対象。OPS/ISO/wOBA/RC27/BABIP/K%・BB%を自動算出。既定ではOPS降順。</p>
+
+<div class="tabs">
+  <a href="#central" class="active" onclick="showTab(event,'central')">セ・リーグ</a>
+  <a href="#pacific" onclick="showTab(event,'pacific')">パ・リーグ</a>
+</div>
+
+<div id="central">
+  <div class="chart-wrap">{{ chart_bat_c|safe }}</div>
+  <div class="chart-wrap" style="margin-top:16px">{{ chart_war_c|safe }}</div>
+  <h3>個人打撃成績一覧 (OPS降順)</h3>
+  <div class="table-scroll">{{ table_bat_c|safe }}</div>
+</div>
+
+<div id="pacific" style="display:none">
+  <div class="chart-wrap">{{ chart_bat_p|safe }}</div>
+  <div class="chart-wrap" style="margin-top:16px">{{ chart_war_p|safe }}</div>
+  <h3>個人打撃成績一覧 (OPS降順)</h3>
+  <div class="table-scroll">{{ table_bat_p|safe }}</div>
+</div>
+
+<p class="note">wOBA・RCはMLBの一般的な線形加重係数を流用した簡易推定値です(NPBの得点環境に合わせた再計算は行っていません)。{{ term('WAR', 'WAR(簡易版)') }}は<a href="https://baseballhub.app/methodology" target="_blank" rel="noopener">baseballhub.app</a>の算出方法を参考にした近似値で、UZR/DRS等の詳細な守備データは使用していません。守備位置は「内野手」までしか区別できないため一塁手もやや過大評価されます。</p>
+
+<script>
+function showTab(e, id) {
+  e.preventDefault();
+  document.getElementById('central').style.display = id === 'central' ? 'block' : 'none';
+  document.getElementById('pacific').style.display = id === 'pacific' ? 'block' : 'none';
+  document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
+  e.target.classList.add('active');
+  window.dispatchEvent(new Event('resize'));
+}
+</script>
+{% endblock %}

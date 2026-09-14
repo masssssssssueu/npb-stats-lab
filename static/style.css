@@ -1,0 +1,269 @@
+:root {
+  --bg: #ffffff;
+  --bg-elev: #f6f7f9;
+  --bg-elev2: #ebedf1;
+  --border: #dfe3e8;
+  --text: #1a1d23;
+  --text-dim: #6b7280;
+  --accent: #e8650f;
+  --accent2: #1f6fb2;
+  --good: #2f9e5c;
+  --bad: #cc3f57;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+  line-height: 1.6;
+}
+
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+header.site-header .brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+header.site-header .brand span { color: var(--accent); }
+
+nav.site-nav { display: flex; gap: 18px; flex-wrap: wrap; }
+nav.site-nav a {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  padding: 6px 4px;
+  border-bottom: 2px solid transparent;
+}
+nav.site-nav a:hover, nav.site-nav a.active {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom-color: var(--accent);
+}
+
+main { max-width: 1180px; margin: 0 auto; padding: 28px 20px 80px; }
+
+h1 { font-size: 1.6rem; margin: 4px 0 6px; }
+h2 { font-size: 1.25rem; margin: 40px 0 14px; border-left: 4px solid var(--accent); padding-left: 10px; }
+h3 { font-size: 1.05rem; color: var(--text-dim); margin: 22px 0 10px; }
+p.lead { color: var(--text-dim); margin-top: 0; }
+p.note { color: var(--text-dim); font-size: 0.85rem; }
+
+.grid { display: grid; gap: 16px; }
+.grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.stat-tile { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.stat-tile .label { color: var(--text-dim); font-size: 0.78rem; }
+.stat-tile .value { font-size: 1.5rem; font-weight: 700; margin-top: 2px; }
+
+table.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+table.stats th, table.stats td {
+  padding: 7px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+table.stats th:first-child, table.stats td:first-child,
+table.stats th.left, table.stats td.left { text-align: left; }
+table.stats thead th {
+  background: var(--bg-elev2);
+  color: var(--text-dim);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+table.stats thead th:hover { color: var(--text); }
+table.stats thead th.sorted-desc::after { content: " \25BC"; font-size: 0.7em; color: var(--accent); }
+table.stats thead th.sorted-asc::after { content: " \25B2"; font-size: 0.7em; color: var(--accent); }
+table.stats tbody tr:hover { background: var(--bg-elev2); }
+table.stats tbody tr:nth-child(-n+3) td:first-child { color: var(--accent); font-weight: 700; }
+
+table.stats td a, table.stats th a { color: inherit; }
+table.stats td a:hover { color: var(--accent2); text-decoration: underline; }
+
+.table-scroll { overflow-x: auto; border-radius: var(--radius); }
+
+.kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+.kv-item {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.kv-item .kv-label { color: var(--text-dim); font-size: 0.72rem; }
+.kv-item .kv-value { font-weight: 700; font-size: 1rem; margin-top: 2px; }
+
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+.pill.good { background: rgba(47,158,92,0.12); color: var(--good); }
+.pill.bad { background: rgba(204,63,87,0.12); color: var(--bad); }
+.pill.info { background: rgba(31,111,178,0.12); color: var(--accent2); }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.tabs a {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.88rem;
+}
+.tabs a.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+
+.chart-wrap { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; }
+
+.back-link { display: inline-block; margin-bottom: 14px; color: var(--text-dim); font-size: 0.88rem; }
+
+.profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+.profile-photo {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg-elev);
+  flex-shrink: 0;
+}
+.team-logo-sm { width: 22px; height: 22px; object-fit: contain; vertical-align: middle; }
+.team-logo-lg { width: 46px; height: 46px; object-fit: contain; vertical-align: middle; }
+
+.term {
+  border-bottom: 1px dotted var(--text-dim);
+  cursor: help;
+  position: relative;
+  font-weight: inherit;
+}
+.term .tip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 7px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.76rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  width: max-content;
+  max-width: 230px;
+  white-space: normal;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  transition: opacity 0.12s ease;
+  z-index: 60;
+  pointer-events: none;
+}
+.term:hover .tip, .term:focus .tip { visibility: visible; opacity: 1; }
+table.stats th .term { text-align: left; }
+
+/* 表の右端に近い列は中央寄せだとツールチップが横スクロール領域の外にはみ出て切れるため、
+   右端側の見出しだけは右寄せ(左方向に展開)にする。 */
+table.stats th:last-child .term .tip,
+table.stats th:nth-last-child(2) .term .tip,
+table.stats th:nth-last-child(3) .term .tip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.matchup-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.matchup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.matchup-header .teams { font-size: 1.15rem; font-weight: 700; }
+.matchup-header .info { color: var(--text-dim); font-size: 0.85rem; }
+.matchup-prob-bar {
+  display: flex;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+.matchup-prob-bar div { display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.matchup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.matchup-side .team-name { font-weight: 700; margin-bottom: 6px; }
+.matchup-side .pitcher-line { font-size: 0.88rem; margin-bottom: 4px; }
+.matchup-side .form-line { font-size: 0.82rem; color: var(--text-dim); }
+.form-dots { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
+.form-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 700; color: #fff; }
+.form-dot.W { background: var(--good); }
+.form-dot.L { background: var(--bad); }
+.form-dot.D { background: var(--text-dim); }
+
+@media (max-width: 560px) {
+  .matchup-grid { grid-template-columns: 1fr; }
+}
+
+footer {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding: 30px 20px 50px;
+}
+
+@media (max-width: 640px) {
+  header.site-header { padding: 12px 14px; }
+  main { padding: 20px 12px 60px; }
+  table.stats { font-size: 0.76rem; }
+}

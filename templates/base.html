@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page_title }} | NPB Stats Lab</title>
+<meta name="description" content="プロ野球(NPB)公式サイトの成績データをもとにしたセイバーメトリクス分析・順位予想サイト">
+<link rel="stylesheet" href="{{ path_prefix|default('') }}static/style.css">
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2/plotly.min.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="brand">NPB Stats <span>Lab</span></div>
+  <nav class="site-nav">
+    <a href="{{ path_prefix|default('') }}index.html" class="{{ 'active' if active=='index' }}">概要</a>
+    <a href="{{ path_prefix|default('') }}batting.html" class="{{ 'active' if active=='batting' }}">打撃成績</a>
+    <a href="{{ path_prefix|default('') }}pitching.html" class="{{ 'active' if active=='pitching' }}">投手成績</a>
+    <a href="{{ path_prefix|default('') }}teams.html" class="{{ 'active' if active=='teams' }}">チーム成績</a>
+    <a href="{{ path_prefix|default('') }}predictions.html" class="{{ 'active' if active=='predictions' }}">順位・勝敗予想</a>
+    <a href="{{ path_prefix|default('') }}tomorrow.html" class="{{ 'active' if active=='tomorrow' }}">次カード予想</a>
+    <a href="{{ path_prefix|default('') }}trend.html" class="{{ 'active' if active=='trend' }}">直近10試合</a>
+  </nav>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer>
+  {{ year }}年度シーズン成績 | データ出典: <a href="https://npb.jp/" target="_blank" rel="noopener">NPB.jp 日本野球機構公式サイト</a><br>
+  最終更新: {{ generated_at }} ・ 個人の分析用サイトです(NPB非公式)
+</footer>
+<script src="{{ path_prefix|default('') }}static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<a class="back-link" href="{{ path_prefix }}{{ list_page }}">← {{ list_label }}一覧に戻る</a>
+<div class="profile-header">
+  {% if photo_url %}
+  <img class="profile-photo" src="{{ photo_url }}" alt="{{ name }}" loading="lazy" onerror="this.remove()">
+  {% endif %}
+  <div>
+    <h1 style="margin-bottom:2px">{{ name }}</h1>
+    <div style="display:flex; align-items:center; gap:6px;">
+      {% if team_logo_url %}<img class="team-logo-sm" src="{{ team_logo_url }}" alt="{{ team }}" loading="lazy" onerror="this.remove()">{% endif %}
+      <a href="{{ path_prefix }}team/{{ team }}.html" style="color:{{ team_color }}; font-weight:700; font-size:1rem;">{{ team }}</a>
+      <span style="color:var(--text-dim); font-weight:400; font-size:1rem;">/ {{ league }}・リーグ</span>
+    </div>
+  </div>
+</div>
+
+{% if batting_tiles %}
+<h2>打撃成績 {% if not batting_qualified %}<span class="pill info">規定打席未達</span>{% endif %}</h2>
+<div class="grid cols-3">
+  {% for tile in batting_tiles %}
+  <div class="stat-tile">
+    <div class="label">{{ tile.label }}</div>
+    <div class="value">{{ tile.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+<h3>打撃詳細スタッツ</h3>
+<div class="table-scroll">{{ batting_table|safe }}</div>
+{% endif %}
+
+{% if projection_table %}
+<h3>残りシーズン成績予想</h3>
+<p class="note">現在の出場ペースを基に計算した予想成績です。</p>
+<div class="table-scroll">{{ projection_table|safe }}</div>
+{% endif %}
+
+{% if pitching_tiles %}
+<h2>投手成績 {% if not pitching_qualified %}<span class="pill info">規定投球回未達</span>{% endif %}</h2>
+<div class="grid cols-3">
+  {% for tile in pitching_tiles %}
+  <div class="stat-tile">
+    <div class="label">{{ tile.label }}</div>
+    <div class="value">{{ tile.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+<h3>投手詳細スタッツ</h3>
+<div class="table-scroll">{{ pitching_table|safe }}</div>
+
+{% if pitching_projection_table %}
+<h3>残りシーズン成績予想</h3>
+<p class="note">現在の出場ペースを基に計算した予想成績です。</p>
+<div class="table-scroll">{{ pitching_projection_table|safe }}</div>
+{% endif %}
+{% endif %}
+{% endblock %}

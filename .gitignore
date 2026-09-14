@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+data/last_build_date.txt
+data/daily_update.log
+site/
