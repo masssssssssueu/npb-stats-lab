@@ -27,7 +27,7 @@ STATIC_DIR = ROOT / "static"
 
 YEAR = int(sys.argv[1]) if len(sys.argv) > 1 else 2026
 
-PLOTLY_CONFIG = {"displaylogo": False, "responsive": True}
+PLOTLY_CONFIG = {"displaylogo": False, "responsive": True, "displayModeBar": False}
 
 
 def style_fig(fig: go.Figure, height: int = 440) -> str:
@@ -35,13 +35,18 @@ def style_fig(fig: go.Figure, height: int = 440) -> str:
         template="plotly_white",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#1a1d23", family="Segoe UI, Hiragino Sans, sans-serif"),
-        margin=dict(l=10, r=10, t=44, b=10),
+        font=dict(color="#1a1d23", family="Segoe UI, Hiragino Sans, sans-serif", size=13),
+        margin=dict(l=10, r=16, t=44, b=10),
         height=height,
         legend=dict(bgcolor="rgba(0,0,0,0)"),
+        title=dict(font=dict(size=14)),
+        hoverlabel=dict(font=dict(size=13)),
     )
-    fig.update_xaxes(gridcolor="#dfe3e8", zerolinecolor="#dfe3e8")
-    fig.update_yaxes(gridcolor="#dfe3e8", zerolinecolor="#dfe3e8")
+    # 見出しラベルがスマホ幅で切れないよう、軸側で必要な分だけ余白を自動確保する
+    fig.update_xaxes(gridcolor="#dfe3e8", zerolinecolor="#dfe3e8", automargin=True)
+    fig.update_yaxes(gridcolor="#dfe3e8", zerolinecolor="#dfe3e8", automargin=True)
+    # 棒グラフの外側ラベルが狭い画面でプロット領域の外に出ても切れないようにする
+    fig.update_traces(cliponaxis=False, selector=dict(type="bar"))
     return fig.to_html(full_html=False, include_plotlyjs=False, config=PLOTLY_CONFIG)
 
 
@@ -306,9 +311,9 @@ def make_log5_heatmap(standings: pd.DataFrame, teams: list[str], league_label: s
     ))
     fig.update_layout(title=f"{league_label} 対戦カード勝率 (log5法・行が勝つ確率)")
     style_fig(fig, height=460)
-    fig.update_xaxes(automargin=True, side="bottom", tickangle=0)
+    fig.update_xaxes(automargin=True, side="bottom", tickangle=45)
     fig.update_yaxes(automargin=True, autorange="reversed")
-    fig.update_layout(margin=dict(l=90, r=20, t=50, b=70))
+    fig.update_layout(margin=dict(l=10, r=10, t=50, b=10))
     return fig.to_html(full_html=False, include_plotlyjs=False, config=PLOTLY_CONFIG)
 
 
