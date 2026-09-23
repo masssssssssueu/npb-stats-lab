@@ -5,11 +5,13 @@
 
 <h2>セントラル・リーグ 最終順位予想</h2>
 <div class="table-scroll">{{ table_sim_c|safe }}</div>
-<div class="chart-wrap">{{ chart_sim_c|safe }}</div>
+<h3>優勝確率</h3>
+{{ chart_sim_c|safe }}
 
 <h2>パシフィック・リーグ 最終順位予想</h2>
 <div class="table-scroll">{{ table_sim_p|safe }}</div>
-<div class="chart-wrap">{{ chart_sim_p|safe }}</div>
+<h3>優勝確率</h3>
+{{ chart_sim_p|safe }}
 
 <h2>対戦カード勝率予想 ({{ term('log5法') }})</h2>
 <p class="note">Bill James考案の{{ term('log5法') }}により、現在の勝率から2チームが対戦した場合の勝率を推定。セルはヨコ軸チームがタテ軸チームに勝つ確率。</p>

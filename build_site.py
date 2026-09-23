@@ -183,40 +183,55 @@ def kv_table(row: pd.Series, columns: list[str], labels: dict[str, str] | None =
     return '<div class="kv-grid">' + "".join(items) + "</div>"
 
 
-def make_batting_chart(df: pd.DataFrame, league_label: str) -> str:
-    top = df.nlargest(15, "OPS").sort_values("OPS")
-    colors = [TEAM_COLORS.get(t, "#3ea6ff") for t in top["球団"]]
-    fig = go.Figure(go.Bar(
-        x=top["OPS"], y=top["選手"] + "(" + top["球団"] + ")", orientation="h",
-        marker_color=colors, text=top["OPS"].map(lambda v: f"{v:.3f}"), textposition="outside",
-    ))
-    fig.update_layout(title=f"{league_label} OPSランキング Top15")
-    fig.update_xaxes(title="OPS")
-    return style_fig(fig, height=460)
+def make_rank_list(items: list[dict]) -> str:
+    """棒グラフの代わりに使う、スマホでも読みやすいランキングリスト。
+
+    items: [{"name_html": str, "value_label": str, "fraction": 0-1, "color": str}, ...]
+    """
+    rows = []
+    for i, it in enumerate(items, start=1):
+        frac = max(0.0, min(1.0, it["fraction"])) * 100
+        rows.append(
+            f'<div class="rank-item"><div class="rank-num">{i}</div>'
+            f'<div class="rank-name">{it["name_html"]}</div>'
+            f'<div class="rank-bar"><div class="rank-bar-fill" style="width:{frac:.1f}%; background:{it["color"]}"></div></div>'
+            f'<div class="rank-value">{it["value_label"]}</div></div>'
+        )
+    return '<div class="rank-list">' + "".join(rows) + "</div>"
 
 
-def make_war_chart(df: pd.DataFrame, league_label: str) -> str:
-    top = df.nlargest(15, "WAR").sort_values("WAR")
-    colors = [TEAM_COLORS.get(t, "#3ea6ff") for t in top["球団"]]
-    fig = go.Figure(go.Bar(
-        x=top["WAR"], y=top["選手"] + "(" + top["球団"] + ")", orientation="h",
-        marker_color=colors, text=top["WAR"].map(lambda v: f"{v:.2f}"), textposition="outside",
-    ))
-    fig.update_layout(title=f"{league_label} WAR(簡易版)ランキング Top15")
-    fig.update_xaxes(title="WAR")
-    return style_fig(fig, height=460)
+def make_batting_rank(df: pd.DataFrame, stat: str = "OPS", decimals: int = 3, top_n: int = 15) -> str:
+    top = df.nlargest(top_n, stat)
+    max_v = top[stat].max() or 1
+    items = []
+    for _, r in top.iterrows():
+        color = TEAM_COLORS.get(r["球団"], "#3ea6ff")
+        name_html = (
+            f'<a href="players/{slugify(r["球団"], r["選手"])}.html">{r["選手"]}</a> '
+            f'<span class="team" style="color:{color}">({r["球団"]})</span>'
+        )
+        items.append({
+            "name_html": name_html, "value_label": f"{r[stat]:.{decimals}f}",
+            "fraction": r[stat] / max_v, "color": color,
+        })
+    return make_rank_list(items)
 
 
-def make_pitching_chart(df: pd.DataFrame, league_label: str) -> str:
-    top = df.nsmallest(15, "FIP").sort_values("FIP", ascending=False)
-    colors = [TEAM_COLORS.get(t, "#3ea6ff") for t in top["球団"]]
-    fig = go.Figure(go.Bar(
-        x=top["FIP"], y=top["投手"] + "(" + top["球団"] + ")", orientation="h",
-        marker_color=colors, text=top["FIP"].map(lambda v: f"{v:.2f}"), textposition="outside",
-    ))
-    fig.update_layout(title=f"{league_label} FIPランキング Top15 (低いほど良い)")
-    fig.update_xaxes(title="FIP")
-    return style_fig(fig, height=460)
+def make_pitching_rank(df: pd.DataFrame, stat: str = "FIP", decimals: int = 2, top_n: int = 15, lower_is_better: bool = True) -> str:
+    top = df.nsmallest(top_n, stat) if lower_is_better else df.nlargest(top_n, stat)
+    max_v = top[stat].max() or 1
+    items = []
+    for _, r in top.iterrows():
+        color = TEAM_COLORS.get(r["球団"], "#3ea6ff")
+        name_html = (
+            f'<a href="players/{slugify(r["球団"], r["投手"])}.html">{r["投手"]}</a> '
+            f'<span class="team" style="color:{color}">({r["球団"]})</span>'
+        )
+        items.append({
+            "name_html": name_html, "value_label": f"{r[stat]:.{decimals}f}",
+            "fraction": r[stat] / max_v, "color": color,
+        })
+    return make_rank_list(items)
 
 
 def make_runs_chart(team_saber: pd.DataFrame) -> str:
@@ -247,14 +262,18 @@ def make_luck_chart(team_saber: pd.DataFrame) -> str:
     return style_fig(fig, height=460)
 
 
-def make_sim_chart(sim_df: pd.DataFrame, league_label: str) -> str:
-    sub = sim_df.sort_values("優勝確率")
-    colors = [TEAM_COLORS.get(t, "#3ea6ff") for t in sub["チーム"]]
-    fig = go.Figure(go.Bar(x=sub["優勝確率"] * 100, y=sub["チーム"], orientation="h", marker_color=colors,
-                            text=sub["優勝確率"].map(pct), textposition="outside"))
-    fig.update_layout(title=f"{league_label} 優勝確率 (モンテカルロ・シミュレーション)")
-    fig.update_xaxes(title="優勝確率 (%)")
-    return style_fig(fig, height=340)
+def make_sim_rank(sim_df: pd.DataFrame) -> str:
+    top = sim_df.sort_values("優勝確率", ascending=False)
+    max_v = top["優勝確率"].max() or 1
+    items = []
+    for _, r in top.iterrows():
+        color = TEAM_COLORS.get(r["チーム"], "#3ea6ff")
+        name_html = f'<a href="team/{r["チーム"]}.html" style="color:{color}; font-weight:700">{r["チーム"]}</a>'
+        items.append({
+            "name_html": name_html, "value_label": pct(r["優勝確率"]),
+            "fraction": r["優勝確率"] / max_v, "color": color,
+        })
+    return make_rank_list(items)
 
 
 def _form_dots_html(results: list[str]) -> str:
@@ -611,10 +630,10 @@ def main() -> None:
     bat_cols = ["選手", "球団", "打率", "打席", "本塁打", "打点", "出塁率", "長打率", "OPS", "ISO", "wOBA", "RC27", "BABIP", "K%", "BB%", "wRC+", "WAR"]
     render(
         "batting.html", "batting",
-        chart_bat_c=make_batting_chart(batting_saber["セ"], "セ・リーグ"),
-        chart_bat_p=make_batting_chart(batting_saber["パ"], "パ・リーグ"),
-        chart_war_c=make_war_chart(batting_saber["セ"], "セ・リーグ"),
-        chart_war_p=make_war_chart(batting_saber["パ"], "パ・リーグ"),
+        chart_bat_c=make_batting_rank(batting_saber["セ"], "OPS", 3),
+        chart_bat_p=make_batting_rank(batting_saber["パ"], "OPS", 3),
+        chart_war_c=make_batting_rank(batting_saber["セ"], "WAR", 2),
+        chart_war_p=make_batting_rank(batting_saber["パ"], "WAR", 2),
         table_bat_c=df_to_html(colorize_teams(linkify_players(batting_saber["セ"][bat_cols], "選手"), "球団")),
         table_bat_p=df_to_html(colorize_teams(linkify_players(batting_saber["パ"][bat_cols], "選手"), "球団")),
     )
@@ -623,8 +642,8 @@ def main() -> None:
     pit_cols = ["投手", "球団", "防御率", "登板", "勝利", "敗北", "セーブ", "投球回", "WHIP", "FIP", "K/9", "BB/9", "K/BB", "K%", "BB%"]
     render(
         "pitching.html", "pitching",
-        chart_pit_c=make_pitching_chart(pitching_saber["セ"], "セ・リーグ"),
-        chart_pit_p=make_pitching_chart(pitching_saber["パ"], "パ・リーグ"),
+        chart_pit_c=make_pitching_rank(pitching_saber["セ"], "FIP", 2),
+        chart_pit_p=make_pitching_rank(pitching_saber["パ"], "FIP", 2),
         table_pit_c=df_to_html(colorize_teams(linkify_players(pitching_saber["セ"][pit_cols], "投手"), "球団")),
         table_pit_p=df_to_html(colorize_teams(linkify_players(pitching_saber["パ"][pit_cols], "投手"), "球団")),
     )
@@ -654,8 +673,8 @@ def main() -> None:
         n_sim=20000,
         table_sim_c=df_to_html(colorize_teams(sim_c_fmt[sim_cols])),
         table_sim_p=df_to_html(colorize_teams(sim_p_fmt[sim_cols])),
-        chart_sim_c=make_sim_chart(sim["セ"], "セ・リーグ"),
-        chart_sim_p=make_sim_chart(sim["パ"], "パ・リーグ"),
+        chart_sim_c=make_sim_rank(sim["セ"]),
+        chart_sim_p=make_sim_rank(sim["パ"]),
         chart_log5_c=make_log5_heatmap(standings[standings["リーグ"] == "セ"], CENTRAL_TEAMS, "セ・リーグ"),
         chart_log5_p=make_log5_heatmap(standings[standings["リーグ"] == "パ"], PACIFIC_TEAMS, "パ・リーグ"),
         table_proj_batters=df_to_html(colorize_teams(linkify_players(proj_batters_top[proj_cols], "選手"), "球団")),

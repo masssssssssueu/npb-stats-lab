@@ -9,15 +9,19 @@
 </div>
 
 <div id="central">
-  <div class="chart-wrap">{{ chart_bat_c|safe }}</div>
-  <div class="chart-wrap" style="margin-top:16px">{{ chart_war_c|safe }}</div>
+  <h3>OPSランキング Top15</h3>
+  {{ chart_bat_c|safe }}
+  <h3>WAR(簡易版)ランキング Top15</h3>
+  {{ chart_war_c|safe }}
   <h3>個人打撃成績一覧 (OPS降順)</h3>
   <div class="table-scroll">{{ table_bat_c|safe }}</div>
 </div>
 
 <div id="pacific" style="display:none">
-  <div class="chart-wrap">{{ chart_bat_p|safe }}</div>
-  <div class="chart-wrap" style="margin-top:16px">{{ chart_war_p|safe }}</div>
+  <h3>OPSランキング Top15</h3>
+  {{ chart_bat_p|safe }}
+  <h3>WAR(簡易版)ランキング Top15</h3>
+  {{ chart_war_p|safe }}
   <h3>個人打撃成績一覧 (OPS降順)</h3>
   <div class="table-scroll">{{ table_bat_p|safe }}</div>
 </div>

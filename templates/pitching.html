@@ -9,13 +9,15 @@
 </div>
 
 <div id="central">
-  <div class="chart-wrap">{{ chart_pit_c|safe }}</div>
+  <h3>FIPランキング Top15 (低いほど良い)</h3>
+  {{ chart_pit_c|safe }}
   <h3>個人投手成績一覧 (FIP昇順)</h3>
   <div class="table-scroll">{{ table_pit_c|safe }}</div>
 </div>
 
 <div id="pacific" style="display:none">
-  <div class="chart-wrap">{{ chart_pit_p|safe }}</div>
+  <h3>FIPランキング Top15 (低いほど良い)</h3>
+  {{ chart_pit_p|safe }}
   <h3>個人投手成績一覧 (FIP昇順)</h3>
   <div class="table-scroll">{{ table_pit_p|safe }}</div>
 </div>
