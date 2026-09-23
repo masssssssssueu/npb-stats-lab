@@ -267,6 +267,29 @@ table.stats th:nth-last-child(3) .term .tip {
   .rank-value { font-size: 0.9rem; }
 }
 
+.glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.glossary-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.glossary-card .head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.glossary-card .abbr { font-size: 1.15rem; font-weight: 800; color: var(--accent); }
+.glossary-card .fullname { font-size: 0.76rem; color: var(--text-dim); letter-spacing: 0.02em; }
+.glossary-card .desc { font-size: 0.9rem; margin: 10px 0; line-height: 1.6; }
+.glossary-card .guide {
+  display: inline-block;
+  background: rgba(232,101,15,0.12);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.glossary-card .goto { font-size: 0.85rem; font-weight: 600; }
+
 .matchup-side .team-name { font-weight: 700; margin-bottom: 6px; }
 .matchup-side .pitcher-line { font-size: 0.88rem; margin-bottom: 4px; }
 .matchup-side .form-line { font-size: 0.82rem; color: var(--text-dim); }

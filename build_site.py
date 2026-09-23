@@ -60,43 +60,183 @@ def df_to_html(df: pd.DataFrame, classes: str = "stats") -> str:
 
 
 GLOSSARY = {
-    "OPS": "出塁率+長打率。打者の総合的な得点貢献度を表す代表的な指標。",
-    "ISO": "長打率-打率。単打を除いた純粋な長打力を表す。",
-    "wOBA": "四球・単打・二塁打・三塁打・本塁打に加重係数をかけて算出する打撃総合指標(簡易版・MLB由来の係数を流用)。",
-    "RC": "Runs Created。その打者が生み出したと推定される得点数。",
-    "RC27": "27アウト(1試合分)を消費する間に、その打者のペースで生み出す推定得点数。",
-    "BABIP": "Batting Average on Balls In Play。フィールド内に飛んだ打球がヒットになった割合。",
-    "K%": "三振率。打席(打者)のうち三振に終わった割合。",
-    "BB%": "四球率。打席(打者)のうち四球で出塁した割合。",
-    "WHIP": "1投球回あたりに許した走者数 (与四球+被安打)÷投球回。",
-    "FIP": "Fielding Independent Pitching。守備の巧拙を除き、本塁打・四死球・奪三振だけで防御率相当を算出する指標。",
-    "K/9": "9イニングあたりの奪三振数。",
-    "BB/9": "9イニングあたりの与四球数。",
-    "K/BB": "奪三振数を与四球数で割った値。制球と奪三振能力のバランスを示す。",
-    "ピタゴラス勝率": "得点と失点から算出する期待勝率。実際の勝率とのズレは「運」の目安になる。",
-    "運(実勝利-期待勝利)": "実際の勝利数とピタゴラス勝率が示す期待勝利数の差。プラスは接戦を拾って勝てている、マイナスはその逆。",
-    "期待勝利数": "ピタゴラス勝率に試合数を掛けた、得失点から見た期待される勝利数。",
-    "モンテカルロ・シミュレーション": "乱数を使って残り試合の結果を何度も仮想的に試行し、最終順位の確率分布を推定する手法。",
-    "log5法": "Bill James考案の、2チームの勝率から対戦時の勝率を推定する計算式。",
-    "安定化点": "そのスタッツが選手の実力をある程度反映し始める目安のサンプルサイズ(打席数・投球回)。値が小さいほどリーグ平均へ強く回帰させる。",
-    "FIP定数": "そのリーグ・年度の実際の防御率に合わせてFIPの基準点を調整するための定数(cFIP)。",
-    "WAR": "Wins Above Replacement(控え選手と比較した勝利貢献度)。baseballhub.appの簡易算出法(OPSから概算したwRC+・出場試合数・盗塁数・守備位置補正のみで計算)を採用した近似値。UZR等の詳細な守備データは使っていないため、真の意味でのWARとは異なる参考値。投手版は算出方法が確立されていないため未対応。",
-    "wRC+": "打撃力を100を基準にした指数にした参考値。baseballhub.app方式(100+(OPS-0.700)×220、30〜220にクリップ)による簡易版で、リーグ・球場補正は行っていない。",
+    "WAR": {
+        "category": "総合指標", "full": "Wins Above Replacement / 勝利貢献度",
+        "tip": "控え選手と比較した勝利貢献度。baseballhub.appの簡易算出法(wRC+・出場試合数・盗塁数・守備位置補正のみ)による近似値。UZR等の詳細な守備データは使っていないため参考値。投手版は未対応。",
+        "desc": "もしこの選手が控えだったら、チームは何勝減ってしまうか、をひと言で表す数字。打撃・走塁・守備(簡易)をまとめて勝ち星に換算する。",
+        "guide": "目安: 0前後=控え相当 / 1〜2=平均的レギュラー / 2〜4=主力 / 4以上=MVP級",
+        "link": "batting.html",
+    },
+    "wRC+": {
+        "category": "総合指標", "full": "Weighted Runs Created Plus",
+        "tip": "打撃力を100を基準にした指数にした参考値。baseballhub.app方式(100+(OPS-0.700)×220、30〜220にクリップ)による簡易版で、リーグ・球場補正は行っていない。",
+        "desc": "打撃力を「リーグ平均=100」の物差しで表した数字。120なら平均より20%多く得点に貢献している、というイメージ。",
+        "guide": "目安: 100=平均 / 110以上=好打者 / 130以上=強打者 / 150以上=リーグトップ級",
+        "link": "batting.html",
+    },
+    "OPS": {
+        "category": "打撃指標", "full": "On-base Plus Slugging",
+        "tip": "出塁率+長打率。打者の総合的な得点貢献度を表す代表的な指標。",
+        "desc": "出塁率(塁に出る割合)と長打率(1打数あたりの塁打)を足しただけのシンプルな指標だが、総合力の目安として広く使われる。",
+        "guide": "目安: .700前後=平均的 / .800以上=好打者 / .900以上=強打者 / 1.000以上=規格外",
+        "link": "batting.html",
+    },
+    "ISO": {
+        "category": "打撃指標", "full": "Isolated Power",
+        "tip": "長打率-打率。単打を除いた純粋な長打力を表す。",
+        "desc": "長打率から打率を引いた数字。単打の影響を除いて「1打数あたり何塁分の長打を稼いでいるか」を表す。",
+        "guide": "目安: .120前後=平均 / .160以上=長打力あり / .200以上=長打力豊富",
+        "link": "batting.html",
+    },
+    "wOBA": {
+        "category": "打撃指標", "full": "Weighted On-Base Average",
+        "tip": "四球・単打・二塁打・三塁打・本塁打に加重係数をかけて算出する打撃総合指標(簡易版・MLB由来の係数を流用)。",
+        "desc": "四球や単打・長打それぞれの「得点への貢献度」に応じて重み付けした出塁率のような指標。OPSより理論的に精緻とされる。",
+        "guide": "目安: .320前後=平均 / .350以上=好打者 / .380以上=強打者",
+        "link": "batting.html",
+    },
+    "RC": {
+        "category": "打撃指標", "full": "Runs Created",
+        "tip": "その打者が生み出したと推定される得点数。",
+        "desc": "その打者の打撃成績から「チームに何点分の得点を生み出したか」を概算する指標。",
+        "guide": None,
+        "link": "batting.html",
+    },
+    "RC27": {
+        "category": "打撃指標", "full": "Runs Created per 27 Outs",
+        "tip": "27アウト(1試合分)を消費する間に、その打者のペースで生み出す推定得点数。",
+        "desc": "「この打者だけでチームを組んだら1試合平均何点入るか」を表す指標。打者ごとの得点力を試合単位で比較できる。",
+        "guide": "目安: 4〜5点前後=リーグ平均的 / 7点以上=非常に高い",
+        "link": "batting.html",
+    },
+    "BABIP": {
+        "category": "打撃指標", "full": "Batting Average on Balls In Play",
+        "tip": "Batting Average on Balls In Play。フィールド内に飛んだ打球がヒットになった割合。",
+        "desc": "本塁打を除き、フィールド内に飛んだ打球がヒットになった割合。極端に高い/低いと「運」の影響が大きい可能性がある。",
+        "guide": "目安: .290〜.300前後が平均的なレンジ",
+        "link": "batting.html",
+    },
+    "K%": {
+        "category": "打撃指標", "full": "Strikeout Rate",
+        "tip": "三振率。打席(打者)のうち三振に終わった割合。",
+        "desc": "打席(打者)のうち三振に終わった割合。打者なら低いほど、投手なら高いほど良い。",
+        "guide": "目安(打者): 20%前後=平均 / 15%以下=良好 / 30%以上=やや多い",
+        "link": None,
+    },
+    "BB%": {
+        "category": "打撃指標", "full": "Walk Rate",
+        "tip": "四球率。打席(打者)のうち四球で出塁した割合。",
+        "desc": "打席(打者)のうち四球で出塁した割合。打者なら高いほど選球眼が良いとされる。",
+        "guide": "目安(打者): 8〜9%前後=平均 / 12%以上=選球眼良好",
+        "link": None,
+    },
+    "WHIP": {
+        "category": "投手指標", "full": "Walks + Hits per Inning Pitched",
+        "tip": "1投球回あたりに許した走者数 (与四球+被安打)÷投球回。",
+        "desc": "1イニングあたり平均何人の走者を出したかを表す指標。低いほど走者を出さない安定した投球ができている。",
+        "guide": "目安: 1.30前後=平均 / 1.10以下=優秀 / 1.00以下=エース級",
+        "link": "pitching.html",
+    },
+    "FIP": {
+        "category": "投手指標", "full": "Fielding Independent Pitching",
+        "tip": "Fielding Independent Pitching。守備の巧拙を除き、本塁打・四死球・奪三振だけで防御率相当を算出する指標。",
+        "desc": "守備の巧拙や運の影響を受けやすい防御率とは別に、投手自身がコントロールしやすい本塁打・四死球・奪三振だけで実力を評価する。",
+        "guide": "目安: 3.50〜4.00前後=平均的 / 3.00以下=優秀 / 2.50以下=エース級",
+        "link": "pitching.html",
+    },
+    "K/9": {
+        "category": "投手指標", "full": "Strikeouts per 9 Innings",
+        "tip": "9イニングあたりの奪三振数。",
+        "desc": "9イニング(1試合分)あたりに奪う三振の数。高いほど空振りを取れる能力が高い。",
+        "guide": "目安: 7前後=平均 / 9以上=奪三振能力が高い",
+        "link": "pitching.html",
+    },
+    "BB/9": {
+        "category": "投手指標", "full": "Walks per 9 Innings",
+        "tip": "9イニングあたりの与四球数。",
+        "desc": "9イニングあたりに与える四球の数。低いほど制球が良い。",
+        "guide": "目安: 3前後=平均 / 2以下=制球良好",
+        "link": "pitching.html",
+    },
+    "K/BB": {
+        "category": "投手指標", "full": "Strikeout-to-Walk Ratio",
+        "tip": "奪三振数を与四球数で割った値。制球と奪三振能力のバランスを示す。",
+        "desc": "奪三振数を与四球数で割った値。三振を奪いつつ四球を出さない、コントロールと決め球を兼ね備えた投手ほど高くなる。",
+        "guide": "目安: 2.0前後=平均 / 3.0以上=優秀",
+        "link": "pitching.html",
+    },
+    "FIP定数": {
+        "category": "投手指標", "full": "cFIP",
+        "tip": "そのリーグ・年度の実際の防御率に合わせてFIPの基準点を調整するための定数(cFIP)。",
+        "desc": "FIPの数値がそのリーグ・年度の実際の防御率と同じ水準になるように補正するための定数。年ごとに再計算される。",
+        "guide": None,
+        "link": "pitching.html",
+    },
+    "ピタゴラス勝率": {
+        "category": "チーム・予測指標", "full": "Pythagorean Winning Percentage",
+        "tip": "得点と失点から算出する期待勝率。実際の勝率とのズレは「運」の目安になる。",
+        "desc": "得点力・失点の少なさから「本来あるべき勝率」を計算する考え方。実際の勝率との差は接戦の勝敗運を反映しているとされる。",
+        "guide": "目安: .500=五分 / .550以上=強豪",
+        "link": "teams.html",
+    },
+    "運(実勝利-期待勝利)": {
+        "category": "チーム・予測指標", "full": "Team Luck",
+        "tip": "実際の勝利数とピタゴラス勝率が示す期待勝利数の差。プラスは接戦を拾って勝てている、マイナスはその逆。",
+        "desc": "実際の勝利数とピタゴラス勝率が示す期待勝利数の差。この差は長いシーズンを通して縮小していく傾向があるとされる。",
+        "guide": "目安: 0前後=順当 / ±3以上=やや偏りあり",
+        "link": "teams.html",
+    },
+    "期待勝利数": {
+        "category": "チーム・予測指標", "full": "Expected Wins",
+        "tip": "ピタゴラス勝率に試合数を掛けた、得失点から見た期待される勝利数。",
+        "desc": "ピタゴラス勝率に試合数を掛けて算出する、得失点から見た「本来あるべき」勝利数。",
+        "guide": None,
+        "link": "teams.html",
+    },
+    "モンテカルロ・シミュレーション": {
+        "category": "チーム・予測指標", "full": "Monte Carlo Simulation",
+        "tip": "乱数を使って残り試合の結果を何度も仮想的に試行し、最終順位の確率分布を推定する手法。",
+        "desc": "サイコロを何万回も振るように、残り試合の結果を乱数で何度も仮想的にシミュレーションし、最終順位がどう分布するかを確率で推定する手法。",
+        "guide": None,
+        "link": "predictions.html",
+    },
+    "log5法": {
+        "category": "チーム・予測指標", "full": "Log5 Method",
+        "tip": "Bill James考案の、2チームの勝率から対戦時の勝率を推定する計算式。",
+        "desc": "野球統計学の父と呼ばれるBill Jamesが考案した、2チームそれぞれの勝率から、その2チームが対戦した場合の勝率を逆算する古典的な計算式。",
+        "guide": None,
+        "link": "predictions.html",
+    },
+    "安定化点": {
+        "category": "チーム・予測指標", "full": "Stabilization Point",
+        "tip": "そのスタッツが選手の実力をある程度反映し始める目安のサンプルサイズ(打席数・投球回)。値が小さいほどリーグ平均へ強く回帰させる。",
+        "desc": "少ない打席・投球回のスタッツはブレが大きく「運」の影響を強く受ける。そのスタッツが選手の実力をある程度反映し始めるまでに必要なサンプルサイズの目安。",
+        "guide": None,
+        "link": "predictions.html",
+    },
 }
 
 
 def term(key: str, display: str | None = None) -> str:
     """用語をホバー(タップ)すると解説が出るスパンでラップする。GLOSSARY未登録ならそのまま返す。"""
-    tip = GLOSSARY.get(key)
+    entry = GLOSSARY.get(key)
     display = display if display is not None else key
-    if not tip:
+    if not entry:
         return display
-    return f'<span class="term" tabindex="0">{display}<span class="tip">{tip}</span></span>'
+    return f'<span class="term" tabindex="0">{display}<span class="tip">{entry["tip"]}</span></span>'
 
 
 def glossarize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """列名がGLOSSARYに載っている場合、見出しにホバー解説を付ける。"""
     return df.rename(columns={c: term(c) for c in df.columns if c in GLOSSARY})
+
+
+def build_glossary_categories() -> dict:
+    order = ["総合指標", "打撃指標", "投手指標", "チーム・予測指標"]
+    grouped: dict[str, list] = {c: [] for c in order}
+    for key, e in GLOSSARY.items():
+        grouped.setdefault(e["category"], []).append({"key": key, **e})
+    return grouped
 
 
 def slugify(team: str, name: str) -> str:
@@ -593,6 +733,7 @@ def main() -> None:
         "predictions.html": "順位・勝敗予想",
         "tomorrow.html": "次の対戦カード予想",
         "trend.html": "直近10試合の好調・不調",
+        "glossary.html": "セイバーメトリクス用語集",
     }
 
     def render(name: str, active: str, **ctx):
@@ -941,6 +1082,8 @@ def main() -> None:
         table_pit_hot=pit_hot, table_pit_cold=pit_cold,
     )
     print(f"  -> 打者{len(trend_bat)}名 / 投手{len(trend_pit)}名のトレンドを算出")
+
+    render("glossary.html", "glossary", categories=build_glossary_categories())
 
     print("[10/10] 静的ファイルをコピー中...")
     static_out = SITE_DIR / "static"

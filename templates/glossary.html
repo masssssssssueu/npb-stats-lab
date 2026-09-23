@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>セイバーメトリクス用語集</h1>
+<p class="lead">サイト内で使っている指標の意味と目安をまとめました。各ページの用語にマウスを乗せる(スマホはタップ)と、ここと同じ簡単な解説がその場で見られます。</p>
+
+{% for category, entries in categories.items() %}
+{% if entries %}
+<h2>{{ category }}</h2>
+<div class="glossary-grid">
+  {% for e in entries %}
+  <div class="glossary-card">
+    <div class="head">
+      <span class="abbr">{{ e.key }}</span>
+      <span class="fullname">{{ e.full }}</span>
+    </div>
+    <p class="desc">{{ e.desc }}</p>
+    {% if e.guide %}<div class="guide">{{ e.guide }}</div>{% endif %}
+    {% if e.link %}<div><a class="goto" href="{{ e.link }}">{{ e.key }}ランキングを見る →</a></div>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}
